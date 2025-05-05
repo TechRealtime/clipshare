@@ -702,6 +702,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
+            will-change: transform;
         }
 
         .chat-icon:hover {
@@ -738,6 +739,7 @@
             border: 1px solid var(--border-color);
             transform: translateY(20px);
             opacity: 0;
+            will-change: transform, opacity;
         }
 
         .chat-container.show {
@@ -806,6 +808,7 @@
             word-break: break-word;
             position: relative;
             animation: fadeIn 0.3s ease;
+            will-change: transform;
         }
 
         .chat-message.sent {
@@ -1431,7 +1434,6 @@
 
             updateUI();
             showNotification("New session created! Code: " + currentSessionId);
-            initChat();
         }
 
         // Join existing session
@@ -1450,9 +1452,6 @@
                     updateUI();
                     document.getElementById('codeModal').style.display = 'none';
                     showNotification("Joined session successfully!");
-                    
-                    // Initialize chat for the new session
-                    initChat();
                 } else {
                     showNotification("Invalid session code", "error");
                 }
@@ -1468,9 +1467,6 @@
                         currentSessionId = savedSession;
                         updateUI();
                         showNotification("Reconnected to your session");
-                        
-                        // Initialize chat for the existing session
-                        initChat();
                     } else {
                         createNewSession();
                     }
@@ -1793,9 +1789,6 @@
             document.getElementById('advancedOptions').style.display = 'none';
             document.getElementById('customCodeInput').value = '';
             document.getElementById('includeSymbols').checked = false;
-            
-            // Initialize chat for the new session
-            initChat();
         }
 
         function blobToBase64(blob) {
@@ -1831,12 +1824,6 @@
 
         // Chat Functions
         function initChat() {
-            // Check if we have a username
-            if (!chatUsername) {
-                showUsernameModal();
-                return false;
-            }
-            
             // Load existing messages if we have a session
             if (currentSessionId) {
                 loadChatMessages();
@@ -1959,7 +1946,10 @@
 
         function openChat() {
             const chatContainer = document.getElementById('chatContainer');
+            const chatIcon = document.getElementById('chatToggle');
+            
             chatContainer.classList.add('show');
+            chatIcon.style.display = 'none';
             isChatOpen = true;
             
             // Reset unread count when chat is opened
@@ -1975,7 +1965,10 @@
 
         function closeChat() {
             const chatContainer = document.getElementById('chatContainer');
+            const chatIcon = document.getElementById('chatToggle');
+            
             chatContainer.classList.remove('show');
+            chatIcon.style.display = 'flex';
             isChatOpen = false;
         }
 
